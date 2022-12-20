@@ -1,7 +1,7 @@
 
 <h2> :warning: Projeto para gerenciamento de estoque</h2>
 
-<h3> :construction: :building_construction: Em Construção </h3>
+<h3> :construction: :building_construction: Em Desenvolvimento </h3>
 
 <h3> :hammer_and_wrench: Tecnologias</h3>
 
