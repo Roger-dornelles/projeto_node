@@ -12,6 +12,6 @@
 - express
 - mysql
 
-<h3> :toolbox: Instalação <h3>
+<h3> :toolbox: Instalação </h3>
 
-
+:wrench: No prompt de comando ( CMD )/ terminal fazer o clone do projeto usando o comando  :point_right: `git clone ` 
