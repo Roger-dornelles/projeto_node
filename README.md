@@ -12,6 +12,7 @@
 - express
 - mysql
 - Jest ( SuperTest )
+- Prettier e Eslint
 
 <h3> :toolbox: Instalação </h3>
 
