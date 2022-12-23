@@ -3,10 +3,11 @@ import request from 'supertest';
 import { connection } from '../instances/mysql';
 
 describe('testing API test route', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let email = 'teste@teste.com';
   let password = '12345678';
+
   beforeAll(async () => {
+    // check dataBase connection
     await connection();
   });
 
