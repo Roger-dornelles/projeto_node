@@ -4,7 +4,7 @@ import { Request, Response } from 'express';
 
 export const createProduct = async (req: Request, res: Response) => {
   let { name, description, input }: CreateProduct = req.body;
-  const userId = req.user && req.user.id;
+  const { id } = req.params;
 
   try {
     if (!name || !description || !input) {
@@ -30,7 +30,7 @@ export const createProduct = async (req: Request, res: Response) => {
     await Product.create({
       name,
       description,
-      userId,
+      userId: id,
       input,
       total: input,
     });

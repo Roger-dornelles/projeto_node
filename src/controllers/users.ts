@@ -66,9 +66,9 @@ export const create = async (req: Request, res: Response) => {
 
 export const update = async (req: Request, res: Response) => {
   let { name, email, password }: CreateUserProps = req.body;
-  let userEmail = req.user && req.user.email;
+  const { id } = req.params;
   try {
-    let user = await User.findOne({ where: { email: userEmail as string } });
+    let user = await User.findOne({ where: { id } });
     if (user) {
       if (name) {
         name = name.toLowerCase();
@@ -129,7 +129,7 @@ export const signin = async (req: Request, res: Response) => {
             expiresIn: '12h',
           });
 
-          return res.status(201).json(token);
+          return res.status(201).json({ token });
         } else {
           return res.status(403).json({ error: 'Senha invalida.' });
         }
@@ -159,10 +159,10 @@ export const deleteUser = async (req: Request, res: Response) => {
 
 export const infoUser = async (req: Request, res: Response) => {
   let { id } = req.params;
-  let userAutenticatedJWT = req?.user?.email;
+  let userAuthenticatedJWT = req.user;
   try {
     let user = await User.findByPk(id);
-    if (user?.email === userAutenticatedJWT) {
+    if (user === userAuthenticatedJWT) {
       return res.status(201).json(user);
     } else {
       return res.status(404).json({ message: 'Usuário não encontrado...' });

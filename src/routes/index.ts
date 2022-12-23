@@ -8,10 +8,10 @@ const route = Router();
 route.get('/test', RouteTest.test);
 route.post('/login', userController.signin);
 route.post('/create', userController.create);
-route.put('/user/update', privateRoute, userController.update);
+route.put('/user/update/:id', privateRoute, userController.update);
 route.delete('/user/delete/:id', privateRoute, userController.deleteUser);
 route.get('/user/info/:id', privateRoute, userController.infoUser);
 
-route.post('/product/create', privateRoute, productController.createProduct);
+route.post('/product/create/:id', privateRoute, productController.createProduct);
 
-module.exports = route;
+export default route;
