@@ -11,6 +11,7 @@
 - bcrypt
 - express
 - mysql
+- Jest ( SuperTest )
 
 <h3> :toolbox: Instalação </h3>
 
