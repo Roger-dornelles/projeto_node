@@ -1,6 +1,7 @@
 import app from '../app';
 import request from 'supertest';
 import { connection } from '../instances/mysql';
+import { response } from 'express';
 
 describe('testing API test route', () => {
   let email = 'teste@teste.com';
@@ -51,6 +52,78 @@ describe('testing API test route', () => {
       .then((response) => {
         expect(response.body).toHaveProperty('message');
         expect(response.body.message).toBe('Preencha todos os campos.');
+        return done();
+      });
+  });
+
+  it('should return error or message create user ', (done) => {
+    request(app)
+      .post('/create')
+      .send(' ')
+      .then((response) => {
+        expect(response.body.message).toBe('Preencha todos os campos...');
+        expect(response.body).not.toBeUndefined();
+        expect(response.body.message).not.toBeUndefined();
+        return done();
+      });
+  });
+
+  it('should return error or message create user (name)', (done) => {
+    request(app)
+      .post('/create')
+      .send(`email=${email}&password=${password}&name=${''}`)
+      .then((response) => {
+        expect(response.body).toHaveProperty('message');
+        expect(response.body.message).not.toBeUndefined();
+        expect(response.body).not.toHaveProperty('error');
+        return done();
+      });
+  });
+
+  it('should return error or message create user (password)', (done) => {
+    request(app)
+      .post('/create')
+      .send(`email=${email}&password={' '}$name=${'Test antunes'}`)
+      .then((response) => {
+        expect(response.body.message).not.toBeUndefined();
+        expect(response.body).not.toHaveProperty('error');
+        expect(response.body.message).toBe('Preencha todos os campos...');
+        return done();
+      });
+  });
+
+  it('should return error or message create user (email)', (done) => {
+    request(app)
+      .post('/create')
+      .send(`email=${''}&password=${password}&name=${'Test antunes'}`)
+      .then((response) => {
+        expect(response.body).toHaveProperty('message');
+        expect(response.body.message).not.toBeUndefined();
+        expect(response.body.message).toBe('Preencha todos os campos...');
+
+        return done();
+      });
+  });
+
+  it('should return message create user (email)', (done) => {
+    request(app)
+      .post('/create')
+      .send(`email=${'teste@teste.c'}&password=${password}&name=${'Test antunes'}`)
+      .then((response) => {
+        expect(response.body).toHaveProperty('message');
+        expect(response.body.message).toBe('Digite um Email valido.');
+        expect(response.body).not.toHaveProperty('error');
+        return done();
+      });
+  });
+
+  it('should return create user ', (done) => {
+    request(app)
+      .post('/create')
+      .send(`email=${'teste@gmail.com'}&password=${password}&name=${'Ricardo'}`)
+      .then((response) => {
+        expect(response.body).not.toBeUndefined();
+        expect(response.body).toHaveProperty('token');
         return done();
       });
   });

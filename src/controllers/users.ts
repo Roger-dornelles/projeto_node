@@ -57,7 +57,7 @@ export const create = async (req: Request, res: Response) => {
       let token = await Jwt.sign({ email: newUser.email, id: newUser.id }, process.env.JWT_SECRET_KEY as string, {
         expiresIn: '12h',
       });
-      return res.status(201).json(token);
+      return res.status(201).json({ token });
     }
   } catch (error) {
     return res.status(500).json({ error: 'Ocorreu um erro, tente mais tarde.' });
