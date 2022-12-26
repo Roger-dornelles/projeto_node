@@ -1,7 +1,7 @@
+import { User } from './../models/User';
 import app from '../app';
 import request from 'supertest';
 import { connection } from '../instances/mysql';
-import { response } from 'express';
 
 describe('testing API test route', () => {
   let email = 'teste@teste.com';
@@ -10,6 +10,10 @@ describe('testing API test route', () => {
   beforeAll(async () => {
     // check dataBase connection
     await connection();
+    let user = await User.findOne({ where: { email: 'teste@gmail.com' } });
+    if (user) {
+      await user.destroy();
+    }
   });
 
   it('should return test route', (done) => {
@@ -123,7 +127,10 @@ describe('testing API test route', () => {
       .send(`email=${'teste@gmail.com'}&password=${password}&name=${'Ricardo'}`)
       .then((response) => {
         expect(response.body).not.toBeUndefined();
+        expect(response.body).not.toBeNull();
         expect(response.body).toHaveProperty('token');
+        expect(response.body.token).not.toBeUndefined();
+        expect(response.body.token).not.toBeNull();
         return done();
       });
   });
