@@ -1,4 +1,4 @@
-import { User } from './../models/User';
+import { User, CreateUserInstance } from './../models/User';
 import app from '../app';
 import request from 'supertest';
 import { connection } from '../instances/mysql';
@@ -6,11 +6,12 @@ import { connection } from '../instances/mysql';
 describe('testing API test route', () => {
   let email = 'teste@teste.com';
   let password = '12345678';
+  let user: CreateUserInstance | null;
 
   beforeAll(async () => {
     // check dataBase connection
     await connection();
-    let user = await User.findOne({ where: { email: 'teste@gmail.com' } });
+    user = await User.findOne({ where: { email: 'teste@gmail.com' } });
     if (user) {
       await user.destroy();
     }
@@ -131,6 +132,18 @@ describe('testing API test route', () => {
         expect(response.body).toHaveProperty('token');
         expect(response.body.token).not.toBeUndefined();
         expect(response.body.token).not.toBeNull();
+        return done();
+      });
+  });
+
+  it('should return error delete user', (done) => {
+    request(app)
+      .delete(`/user/delete/${user?.id as unknown}`)
+      .then((response) => {
+        expect(response.body).not.toBeUndefined();
+        expect(response.body).not.toBeNull();
+        expect(response.body).toHaveProperty('error');
+        expect(response.body.error).toBe('Usuário não autenticado.');
         return done();
       });
   });

@@ -148,12 +148,12 @@ export const deleteUser = async (req: Request, res: Response) => {
     const user = await User.findByPk(id);
     if (user) {
       await user.destroy();
-      res.status(201).json('Usuário excluido com sucesso...');
+      res.status(201).json({ message: 'Usuário excluido com sucesso...' });
     } else {
       return res.status(404).json({ message: 'Usuário não encontrado...' });
     }
   } catch (error) {
-    return res.status(500).json({ message: 'Ocorreu um erro, tente mais tarde.' });
+    return res.status(500).json({ error: 'Ocorreu um erro, tente mais tarde.' });
   }
 };
 
