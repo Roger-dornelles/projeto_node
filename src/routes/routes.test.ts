@@ -7,14 +7,12 @@ describe('testing API test route', () => {
   let email = 'teste@teste.com';
   let password = '12345678';
   let user: CreateUserInstance | null;
-
+  let token: string;
   beforeAll(async () => {
     // check dataBase connection
     await connection();
+
     user = await User.findOne({ where: { email: 'teste@gmail.com' } });
-    if (user) {
-      await user.destroy();
-    }
   });
 
   it('should return test route', (done) => {
@@ -24,39 +22,6 @@ describe('testing API test route', () => {
         expect(response.body).not.toBeUndefined();
         expect(response.body.message).toBe('route test...');
         expect(response.body).toHaveProperty('message');
-        return done();
-      });
-  });
-
-  it('should return login path', (done) => {
-    request(app)
-      .post('/login')
-      .send(`email=${email}&password=${password}`)
-      .then((response) => {
-        expect(response.body).toHaveProperty('token');
-        expect(response.body.token).not.toBeUndefined();
-        return done();
-      });
-  });
-
-  it('should return login path', (done) => {
-    request(app)
-      .post('/login')
-      .then((response) => {
-        expect(response.body).toHaveProperty('message');
-        expect(response.body).not.toBeUndefined();
-        expect(response.body.message).not.toBeUndefined();
-        return done();
-      });
-  });
-
-  it('should return login path', (done) => {
-    request(app)
-      .post('/login')
-      .send(` `)
-      .then((response) => {
-        expect(response.body).toHaveProperty('message');
-        expect(response.body.message).toBe('Preencha todos os campos.');
         return done();
       });
   });
@@ -132,19 +97,66 @@ describe('testing API test route', () => {
         expect(response.body).toHaveProperty('token');
         expect(response.body.token).not.toBeUndefined();
         expect(response.body.token).not.toBeNull();
+
+        return done();
+      });
+  });
+
+  it('should return login path', (done) => {
+    request(app)
+      .post('/login')
+      .send(`email=${'teste@gmail.com'}&password=${password}`)
+      .then((response) => {
+        expect(response.body).toHaveProperty('token');
+        expect(response.body.token).not.toBeUndefined();
+        expect(response.body.token).not.toBeNull();
+        token = response.body.token;
+        return done();
+      });
+  });
+
+  it('should return login path', (done) => {
+    request(app)
+      .post('/login')
+      .then((response) => {
+        expect(response.body).toHaveProperty('message');
+        expect(response.body).not.toBeUndefined();
+        expect(response.body.message).not.toBeUndefined();
+        return done();
+      });
+  });
+
+  it('should return login path', (done) => {
+    request(app)
+      .post('/login')
+      .send(` `)
+      .then((response) => {
+        expect(response.body).toHaveProperty('message');
+        expect(response.body.message).toBe('Preencha todos os campos.');
         return done();
       });
   });
 
   it('should return error delete user', (done) => {
     request(app)
-      .delete(`/user/delete/${user?.id as unknown}`)
+      .delete(`/user/delete/${user?.id}`)
       .then((response) => {
         expect(response.body).not.toBeUndefined();
         expect(response.body).not.toBeNull();
         expect(response.body).toHaveProperty('error');
         expect(response.body.error).toBe('Usuário não autenticado.');
         return done();
+      });
+  });
+
+  it('should return exclude user', async () => {
+    user = await User.findOne({ where: { email: 'teste@gmail.com' } });
+    await request(app)
+      .delete(`/user/delete/${user?.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .then((response) => {
+        expect(response.body).toHaveProperty('message');
+        expect(response.body.message).toBe('Usuário excluido com sucesso...');
       });
   });
 });
