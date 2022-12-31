@@ -137,6 +137,31 @@ describe('testing API test route', () => {
       });
   });
 
+  it('should return error message', (done) => {
+    request(app)
+      .put(`/user/update/${user?.id}`)
+      .then((response) => {
+        expect(response.body).toHaveProperty('error');
+        expect(response.body.error).toBe('Usuário não autenticado.');
+        return done();
+      });
+  });
+
+  it('should retunr user update', async () => {
+    user = await User.findOne({ where: { email: 'teste@gmail.com' } });
+    await request(app)
+      .put(`/user/update/${user?.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .then((response) => {
+        expect(response.body).toHaveProperty('message');
+        expect(response.body.message).toBe('Dados atualizados...');
+        expect(response.body).toHaveProperty('token');
+        expect(response.body.token).not.toBeUndefined();
+        expect(response.body.token).not.toBeNaN();
+        expect(response.body.token).not.toBeNull();
+      });
+  });
+
   it('should return error delete user', (done) => {
     request(app)
       .delete(`/user/delete/${user?.id}`)
