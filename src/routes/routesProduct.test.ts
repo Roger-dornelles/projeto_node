@@ -9,8 +9,8 @@ describe('testing the product route.', () => {
   let user: CreateUserInstance | null;
   let token: string;
 
-  let name = 'Prego';
-  let description = '5X12';
+  let name = 'Prego teste';
+  let description = '5X12 teste';
   let input = 15;
 
   beforeAll(async () => {
@@ -60,7 +60,7 @@ describe('testing the product route.', () => {
   });
 
   it('should return create product', async () => {
-    await await request(app)
+    await request(app)
       .post(`/product/create/${user?.id}`)
       .send(`name=${name}&description=${description}&input=${input}`)
       .set('Authorization', `Bearer ${token}`)

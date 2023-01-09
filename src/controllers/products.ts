@@ -40,3 +40,18 @@ export const createProduct = async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Ocorreu um erro, tente mais tarde.' });
   }
 };
+
+export const deleteProduct = async (req: Request, res: Response) => {
+  try {
+    let { id } = req.params;
+    let product = await Product.findOne({ where: { id } });
+    if (product) {
+      await product.destroy();
+      res.status(200).json({ message: 'Produto excluido com sucesso.' });
+    } else {
+      res.status(404).json({ message: 'Produto não encontrado.' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Ocorreu um erro, tente mais tarde.' });
+  }
+};

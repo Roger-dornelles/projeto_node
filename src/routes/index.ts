@@ -13,5 +13,6 @@ route.delete('/user/delete/:id', privateRoute, userController.deleteUser);
 route.get('/user/info/:id', privateRoute, userController.infoUser);
 
 route.post('/product/create/:id', privateRoute, productController.createProduct);
+route.delete('/delete/product/:id', privateRoute, productController.deleteProduct)
 
 export default route;

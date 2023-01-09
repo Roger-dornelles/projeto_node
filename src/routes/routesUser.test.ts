@@ -3,7 +3,6 @@ import app from '../app';
 import request from 'supertest';
 import { connection } from '../instances/mysql';
 
-
 describe('testing the User route', () => {
   let email = 'teste@teste.com';
   let password = '12345678';
@@ -186,4 +185,3 @@ describe('testing the User route', () => {
       });
   });
 });
-
