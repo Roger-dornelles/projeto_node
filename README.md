@@ -13,6 +13,7 @@
 - mysql
 - Jest ( SuperTest )
 - Prettier e Eslint
+- Typescript
 
 <h3> :toolbox: Instalação </h3>
 
