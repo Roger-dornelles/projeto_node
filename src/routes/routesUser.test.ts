@@ -1,9 +1,10 @@
-import { User, CreateUserInstance } from './../models/User';
+import { User, CreateUserInstance } from '../models/User';
 import app from '../app';
 import request from 'supertest';
 import { connection } from '../instances/mysql';
 
-describe('testing API test route', () => {
+
+describe('testing the User route', () => {
   let email = 'teste@teste.com';
   let password = '12345678';
   let user: CreateUserInstance | null;
@@ -147,7 +148,7 @@ describe('testing API test route', () => {
       });
   });
 
-  it('should retunr user update', async () => {
+  it('should return user update', async () => {
     user = await User.findOne({ where: { email: 'teste@gmail.com' } });
     await request(app)
       .put(`/user/update/${user?.id}`)
@@ -185,3 +186,4 @@ describe('testing API test route', () => {
       });
   });
 });
+
