@@ -1,3 +1,4 @@
+import { Product } from '../models/Product';
 import { User, CreateUserInstance } from '../models/User';
 import app from '../app';
 import request from 'supertest';
@@ -71,6 +72,32 @@ describe('testing the product route.', () => {
         expect(response.body.message).not.toBeUndefined();
         expect(response.body.message).not.toBeNull();
         expect(response.body).not.toContain('error');
+      });
+  });
+
+  it('should message error authentication', async () => {
+    let product = await Product.findOne({ where: { name: name, description: description } });
+
+    await request(app)
+      .delete(`/delete/product/${product?.id}`)
+      .then((response) => {
+        expect(response.body).toHaveProperty('error');
+        expect(response.body.error).toBe('Usuário não autenticado.');
+        expect(response.body).not.toBeUndefined();
+        expect(response.body).not.toBeNull();
+      });
+  });
+
+  it('should delete product', async () => {
+    let product = await Product.findOne({ where: { name: name, description: description } });
+
+    await request(app)
+      .delete(`/delete/product/${product?.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .then((response) => {
+        expect(response.body.message).toBe('Produto excluido com sucesso.');
+        expect(response.body).not.toBeUndefined();
+        expect(response.body).not.toBeNull();
       });
   });
 });
