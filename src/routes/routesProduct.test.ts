@@ -12,7 +12,7 @@ describe('testing the product route.', () => {
 
   let name = 'Prego teste';
   let description = '5X12 teste';
-  let input = 15;
+  let input = 25;
 
   beforeAll(async () => {
     // check dataBase connection
@@ -42,6 +42,19 @@ describe('testing the product route.', () => {
         expect(response.body.error).not.toBeNaN();
         expect(response.body.error).not.toBeUndefined();
         return done();
+      });
+  });
+
+  it('should message error authentication', async () => {
+    let product = await Product.findOne({ where: { name: name, description: description } });
+
+    await request(app)
+      .delete(`/delete/product/${product?.id}`)
+      .then((response) => {
+        expect(response.body).toHaveProperty('error');
+        expect(response.body.error).toBe('Usuário não autenticado.');
+        expect(response.body).not.toBeUndefined();
+        expect(response.body).not.toBeNull();
       });
   });
 
@@ -75,16 +88,48 @@ describe('testing the product route.', () => {
       });
   });
 
-  it('should message error authentication', async () => {
-    let product = await Product.findOne({ where: { name: name, description: description } });
+  it('should return product update (add product) message', async () => {
+    let product = await Product.findOne({ where: { name } });
 
     await request(app)
-      .delete(`/delete/product/${product?.id}`)
+      .put(`/update/product/${product?.id}`)
+      .send(`input=${30}`)
+      .set('Authorization', `Bearer ${token}`)
       .then((response) => {
-        expect(response.body).toHaveProperty('error');
-        expect(response.body.error).toBe('Usuário não autenticado.');
-        expect(response.body).not.toBeUndefined();
-        expect(response.body).not.toBeNull();
+        expect(response.body).toHaveProperty('message');
+        expect(response.body.message).toBe('Produto atualizado.');
+        expect(response.body.message).not.toBeUndefined();
+        expect(response.body.message).not.toBeNull();
+      });
+  });
+
+  it('should return product update (remove product) message', async () => {
+    let product = await Product.findOne({ where: { name } });
+
+    await request(app)
+      .put(`/update/product/${product?.id}`)
+      .send(`output=${30}`)
+      .set('Authorization', `Bearer ${token}`)
+      .then((response) => {
+        expect(response.body).toHaveProperty('message');
+        expect(response.body.message).toBe('Produto atualizado.');
+        expect(response.body.message).not.toBeUndefined();
+        expect(response.body.message).not.toBeNull();
+      });
+  });
+
+  it('should return product update (update product description) message', async () => {
+    let product = await Product.findOne({ where: { name } });
+
+    await request(app)
+      .put(`/update/product/${product?.id}`)
+      .send(`description=${'description product'}`)
+      .set('Authorization', `Bearer ${token}`)
+      .then((response) => {
+        expect(response.body).toHaveProperty('message');
+        expect(response.body.message).toBe('Produto atualizado.');
+        expect(response.body.message).not.toBeUndefined();
+        expect(response.body.message).not.toBeNull();
       });
   });
 

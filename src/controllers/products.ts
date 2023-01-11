@@ -1,4 +1,4 @@
-import { CreateProduct, UpdateProductProps } from '../types/Product';
+import { CreateProduct } from '../types/Product';
 import { Product } from '../models/Product';
 import { Request, Response } from 'express';
 
@@ -58,18 +58,21 @@ export const updateProduct = async (req: Request, res: Response) => {
       }
 
       if (input) {
-        Object(product).input = Number(input);
-        Object(product).total + Number(input);
+        Object(product).input = Object(product).input + Number(input);
+        Object(product).total = Object(product).total + Number(input);
       }
 
-      if (output && Object(product).total >= Number(output)) {
-        Object(product).output = output;
-        Object(product).total = Object(product).total - Number(output);
-      } else {
+      if (Object(product).total < Number(output)) {
         return res.status(200).json({ message: 'Quantidade em estoque menor que a quantidade solicitada.' });
       }
 
-      product && (await product.save());
+      if (output) {
+        Object(product).total = output && Object(product).total - Number(output);
+
+        Object(product).output = output && Object(product).output + Number(output);
+      }
+
+      await product.save();
       return res.status(201).json({ message: 'Produto atualizado.' });
     } else {
       return res.status(404).json({ message: 'Produto não cadastrado.' });
