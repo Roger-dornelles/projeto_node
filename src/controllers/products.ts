@@ -46,9 +46,9 @@ export const updateProduct = async (req: Request, res: Response) => {
   try {
     let { name, description, input, output } = req.body;
     let { id } = req.params;
-    let product = await Product.findOne({ where: { id } });
 
-    if (id) {
+    let product = await Product.findOne({ where: { id } });
+    if (product) {
       if (name) {
         Object(product).name = name;
       }
@@ -75,7 +75,7 @@ export const updateProduct = async (req: Request, res: Response) => {
       return res.status(404).json({ message: 'Produto não cadastrado.' });
     }
   } catch (error) {
-    return res.status(500).json({ error: 'Ocorreu um erro, tente ais tarde.' });
+    return res.status(500).json({ error: 'Ocorreu um erro, tente mais tarde.' });
   }
 };
 
@@ -86,6 +86,22 @@ export const deleteProduct = async (req: Request, res: Response) => {
     if (product) {
       await product.destroy();
       return res.status(200).json({ message: 'Produto excluido com sucesso.' });
+    } else {
+      return res.status(404).json({ message: 'Produto não encontrado.' });
+    }
+  } catch (error) {
+    return res.status(500).json({ error: 'Ocorreu um erro, tente mais tarde.' });
+  }
+};
+
+export const getProduct = async (req: Request, res: Response) => {
+  try {
+    let { id } = req.params;
+
+    if (id) {
+      let product = await Product.findOne({ where: { id } });
+
+      product ? res.status(201).json({ product }) : res.status(404).json({ message: 'Produto não cadastrado.' });
     } else {
       return res.status(404).json({ message: 'Produto não encontrado.' });
     }
