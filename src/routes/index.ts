@@ -13,6 +13,7 @@ route.put('/user/update/:id', privateRoute, userController.update);
 route.delete('/user/delete/:id', privateRoute, userController.deleteUser);
 route.get('/user/info/:id', privateRoute, userController.infoUser);
 
+route.get('/products/all',privateRoute,productController.allProducts)
 route.post('/product/create/:id', privateRoute, productController.createProduct);
 route.delete('/delete/product/:id', privateRoute, productController.deleteProduct);
 route.put('/update/product/:id', privateRoute, productController.updateProduct);

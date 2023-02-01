@@ -112,3 +112,16 @@ export const getProduct = async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Ocorreu um erro, tente mais tarde.' });
   }
 };
+
+export const allProducts = async (req: Request, res: Response) => {
+  try {
+    const products = await Product.findAll();
+    if (products) {
+      res.status(201).json({ products });
+    } else {
+      res.status(404).json({ message: 'Nenhum produto encontrado.' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Ocorreu um erro, tente mais tarde.' });
+  }
+};
