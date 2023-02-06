@@ -1,3 +1,5 @@
+import { Product } from './../models/Product';
+import { User } from './../models/User';
 import { CreateProduct } from '../types/Product';
 import { Product } from '../models/Product';
 import { Request, Response } from 'express';
@@ -104,6 +106,12 @@ export const getProduct = async (req: Request, res: Response) => {
     if (id) {
       let product = await Product.findOne({ where: { id } });
 
+      const user = await User.findOne({
+        where: {
+          id: product?.userId,
+        },
+      });
+      product.userName = user?.name;
       product ? res.status(201).json({ product }) : res.status(404).json({ message: 'Produto não cadastrado.' });
     } else {
       return res.status(404).json({ message: 'Produto não encontrado.' });

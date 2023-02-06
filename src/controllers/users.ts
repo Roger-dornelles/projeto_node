@@ -4,6 +4,7 @@ import validator from 'validator';
 import bcrypt from 'bcrypt';
 import Jwt from 'jsonwebtoken';
 import { SigninProps, CreateUserProps } from '../types/Users';
+import { emit } from 'process';
 
 export const create = async (req: Request, res: Response) => {
   let { name, email, password }: CreateUserProps = req.body;
@@ -159,10 +160,12 @@ export const deleteUser = async (req: Request, res: Response) => {
 
 export const infoUser = async (req: Request, res: Response) => {
   let { id } = req.params;
-  let userAuthenticatedJWT = req.user;
+
+  let { email } = req.user;
   try {
     let user = await User.findByPk(id);
-    if (user === userAuthenticatedJWT) {
+
+    if (user?.email === email) {
       return res.status(201).json(user);
     } else {
       return res.status(404).json({ message: 'Usuário não encontrado...' });

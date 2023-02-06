@@ -9,6 +9,7 @@ export interface ProductInstance extends Model {
   input: number;
   output: number;
   total: number;
+  userName: string;
 }
 
 export const Product = sequelize.define<ProductInstance>(
@@ -21,6 +22,10 @@ export const Product = sequelize.define<ProductInstance>(
     },
     userId: {
       type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    userName: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
     name: {
