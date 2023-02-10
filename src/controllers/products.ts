@@ -1,4 +1,3 @@
-import { Product } from './../models/Product';
 import { User } from './../models/User';
 import { CreateProduct } from '../types/Product';
 import { Product } from '../models/Product';
@@ -20,8 +19,10 @@ export const createProduct = async (req: Request, res: Response) => {
       },
     });
 
+    const userVerified = await User.findOne({ where: { id } });
+
     if (bankVerifiedProduct) {
-      return res.status(200).json({ message: 'Produto já cadastrado.' });
+      return res.status(200).json({ error: 'Produto já cadastrado.' });
     }
 
     if (name && description) {
@@ -36,6 +37,7 @@ export const createProduct = async (req: Request, res: Response) => {
       input,
       total: input,
       output: 0,
+      userName: userVerified?.name ? userVerified?.name : 'Indefinido',
     });
 
     return res.status(201).json({ message: 'Produto cadastrado com sucesso...' });
