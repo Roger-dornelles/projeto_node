@@ -18,7 +18,7 @@ export const privateRoute = async (req: Request, res: Response, next: NextFuncti
     let decoded = jwt.verify(token, process.env.JWT_SECRET_KEY as string);
 
     if (decoded) {
-      req.user = decoded as TokenInterface;
+      req.user = decoded;
       next();
     } else {
       res.status(401).json({ error: 'Não autorizado.' });

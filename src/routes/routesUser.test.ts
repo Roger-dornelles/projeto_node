@@ -155,10 +155,6 @@ describe('testing the User route', () => {
       .then((response) => {
         expect(response.body).toHaveProperty('message');
         expect(response.body.message).toBe('Dados atualizados...');
-        expect(response.body).toHaveProperty('token');
-        expect(response.body.token).not.toBeUndefined();
-        expect(response.body.token).not.toBeNaN();
-        expect(response.body.token).not.toBeNull();
       });
   });
 

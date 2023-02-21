@@ -113,7 +113,7 @@ export const getProduct = async (req: Request, res: Response) => {
           id: product?.userId,
         },
       });
-      product.userName = user?.name;
+      Object(product).userName = user?.name;
       product ? res.status(201).json({ product }) : res.status(404).json({ message: 'Produto não cadastrado.' });
     } else {
       return res.status(404).json({ message: 'Produto não encontrado.' });

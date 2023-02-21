@@ -158,7 +158,8 @@ export const deleteUser = async (req: Request, res: Response) => {
 export const infoUser = async (req: Request, res: Response) => {
   let { id } = req.params;
 
-  let { email } = req.user;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let { email }: any = req.user;
 
   try {
     let user = await User.findByPk(id);
