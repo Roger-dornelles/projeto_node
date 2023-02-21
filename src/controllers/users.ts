@@ -99,10 +99,8 @@ export const update = async (req: Request, res: Response) => {
       }
 
       await user.save();
-      let token = await Jwt.sign({ id: user?.id, email: user?.email }, process.env.JWT_SECRET_KEY as string, {
-        expiresIn: '12h',
-      });
-      return res.status(201).json({ message: 'Dados atualizados...', token });
+
+      return res.status(201).json({ message: 'Dados atualizados...' });
     } else {
       return res.status(404).json({ error: 'Usuário inexistente.' });
     }
