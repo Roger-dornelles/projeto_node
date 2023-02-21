@@ -4,7 +4,6 @@ import validator from 'validator';
 import bcrypt from 'bcrypt';
 import Jwt from 'jsonwebtoken';
 import { SigninProps, CreateUserProps } from '../types/Users';
-import { emit } from 'process';
 
 export const create = async (req: Request, res: Response) => {
   let { name, email, password }: CreateUserProps = req.body;
@@ -85,7 +84,7 @@ export const update = async (req: Request, res: Response) => {
             user.email = email;
           }
         } else {
-          return res.status(200).json({ message: 'Digite um email valido.' });
+          return res.status(200).json({ error: 'Digite um email valido.' });
         }
       }
 
@@ -95,7 +94,7 @@ export const update = async (req: Request, res: Response) => {
         if (isPasswordValid) {
           user.password = password;
         } else {
-          return res.status(400).json({ message: 'Senha invalida' });
+          return res.status(400).json({ error: 'Senha invalida' });
         }
       }
 
@@ -105,7 +104,7 @@ export const update = async (req: Request, res: Response) => {
       });
       return res.status(201).json({ message: 'Dados atualizados...', token });
     } else {
-      return res.status(404).json({ message: 'Usuario inexistente.' });
+      return res.status(404).json({ error: 'Usuário inexistente.' });
     }
   } catch (error) {
     return res.status(500).json({ error: 'Ocorreu um erro, tente mais tarde.' });
@@ -162,13 +161,14 @@ export const infoUser = async (req: Request, res: Response) => {
   let { id } = req.params;
 
   let { email } = req.user;
+
   try {
     let user = await User.findByPk(id);
 
     if (user?.email === email) {
       return res.status(201).json(user);
     } else {
-      return res.status(404).json({ message: 'Usuário não encontrado...' });
+      return res.status(404).json({ error: 'Usuário não encontrado...' });
     }
   } catch (error) {
     return res.status(500).json({ error: 'ocorreu um erro, tente mais tarde.' });

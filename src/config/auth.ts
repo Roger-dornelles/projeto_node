@@ -21,7 +21,7 @@ export const privateRoute = async (req: Request, res: Response, next: NextFuncti
       req.user = decoded as TokenInterface;
       next();
     } else {
-      res.status(500).json({ error: 'Não autorizado.' });
+      res.status(401).json({ error: 'Não autorizado.' });
     }
   } catch (err) {
     res.status(401).json({ error: 'Usuário não autenticado.' });

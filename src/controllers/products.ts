@@ -67,7 +67,7 @@ export const updateProduct = async (req: Request, res: Response) => {
       }
 
       if (Object(product).total < Number(output)) {
-        return res.status(200).json({ message: 'Quantidade em estoque menor que a quantidade solicitada.' });
+        return res.status(200).json({ error: 'Quantidade em estoque menor que a quantidade solicitada.' });
       }
 
       if (output) {
