@@ -21,4 +21,5 @@
 
 :wrench: Após fazer o clone do projeto navegar ate a pasta do projeto pelo prompt de comando ( CMD ) / terminal e fazer a instalação das dependencias do projeto usando o comando :point_right: `npm install`
 
-:wrench: Na pasta do projeto pelo prompt de comando ( CMD ) / terminal para rodar o projeto usar o comando :point_right: `npm run dev`
+:wrench: Na pasta do projeto pelo prompt de comando ( CMD ) / terminal para rodar o projeto usar o comando :point_right: `npm run dev`,
+para executar os teste usar o comando :point_right: `npm run test`
