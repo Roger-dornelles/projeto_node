@@ -67,6 +67,7 @@ export const create = async (req: Request, res: Response) => {
 export const update = async (req: Request, res: Response) => {
   let { name, email, password }: CreateUserProps = req.body;
   const { id } = req.params;
+
   try {
     let user = await User.findOne({ where: { id } });
     if (user) {
@@ -92,7 +93,7 @@ export const update = async (req: Request, res: Response) => {
         let regex = /^[0-9a-zA-Z]{8,}$/;
         let isPasswordValid = regex.test(password);
         if (isPasswordValid) {
-          user.password = password;
+          user.password = await bcrypt.hashSync(password, 10);
         } else {
           return res.status(400).json({ error: 'Senha invalida' });
         }
