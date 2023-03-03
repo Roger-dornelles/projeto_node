@@ -1,31 +1,22 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.allProducts = exports.getProduct = exports.deleteProduct = exports.updateProduct = exports.createProduct = void 0;
 const User_1 = require("./../models/User");
 const Product_1 = require("../models/Product");
-const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const createProduct = async (req, res) => {
     let { name, description, input } = req.body;
     const { id } = req.params;
     try {
         if (!name || !description || !input) {
             return res.status(404).json({ message: 'Preencha todos os campos.' });
         }
-        const bankVerifiedProduct = yield Product_1.Product.findOne({
+        const bankVerifiedProduct = await Product_1.Product.findOne({
             where: {
                 name: name.toLowerCase(),
                 description: description.toLowerCase(),
             },
         });
-        const userVerified = yield User_1.User.findOne({ where: { id } });
+        const userVerified = await User_1.User.findOne({ where: { id } });
         if (bankVerifiedProduct) {
             return res.status(200).json({ error: 'Produto já cadastrado.' });
         }
@@ -33,27 +24,27 @@ const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             name = name.toLowerCase();
             description = description.toLowerCase();
         }
-        yield Product_1.Product.create({
+        await Product_1.Product.create({
             name,
             description,
             userId: id,
             input,
             total: input,
             output: 0,
-            userName: (userVerified === null || userVerified === void 0 ? void 0 : userVerified.name) ? userVerified === null || userVerified === void 0 ? void 0 : userVerified.name : 'Indefinido',
+            userName: userVerified?.name ? userVerified?.name : 'Indefinido',
         });
         return res.status(201).json({ message: 'Produto cadastrado com sucesso...' });
     }
     catch (error) {
         return res.status(500).json({ error: 'Ocorreu um erro, tente mais tarde.' });
     }
-});
+};
 exports.createProduct = createProduct;
-const updateProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const updateProduct = async (req, res) => {
     try {
         let { name, description, input, output } = req.body;
         let { id } = req.params;
-        let product = yield Product_1.Product.findOne({ where: { id } });
+        let product = await Product_1.Product.findOne({ where: { id } });
         if (product) {
             if (name) {
                 Object(product).name = name;
@@ -72,7 +63,7 @@ const updateProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
                 Object(product).total = output && Object(product).total - Number(output);
                 Object(product).output = output && Object(product).output + Number(output);
             }
-            yield product.save();
+            await product.save();
             return res.status(201).json({ message: 'Produto atualizado.' });
         }
         else {
@@ -82,14 +73,14 @@ const updateProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     catch (error) {
         return res.status(500).json({ error: 'Ocorreu um erro, tente mais tarde.' });
     }
-});
+};
 exports.updateProduct = updateProduct;
-const deleteProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const deleteProduct = async (req, res) => {
     try {
         let { id } = req.params;
-        let product = yield Product_1.Product.findOne({ where: { id } });
+        let product = await Product_1.Product.findOne({ where: { id } });
         if (product) {
-            yield product.destroy();
+            await product.destroy();
             return res.status(200).json({ message: 'Produto excluido com sucesso.' });
         }
         else {
@@ -99,19 +90,19 @@ const deleteProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     catch (error) {
         return res.status(500).json({ error: 'Ocorreu um erro, tente mais tarde.' });
     }
-});
+};
 exports.deleteProduct = deleteProduct;
-const getProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getProduct = async (req, res) => {
     try {
         let { id } = req.params;
         if (id) {
-            let product = yield Product_1.Product.findOne({ where: { id } });
-            const user = yield User_1.User.findOne({
+            let product = await Product_1.Product.findOne({ where: { id } });
+            const user = await User_1.User.findOne({
                 where: {
-                    id: product === null || product === void 0 ? void 0 : product.userId,
+                    id: product?.userId,
                 },
             });
-            Object(product).userName = user === null || user === void 0 ? void 0 : user.name;
+            Object(product).userName = user?.name;
             product ? res.status(201).json({ product }) : res.status(404).json({ message: 'Produto não cadastrado.' });
         }
         else {
@@ -121,11 +112,11 @@ const getProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     catch (error) {
         return res.status(500).json({ error: 'Ocorreu um erro, tente mais tarde.' });
     }
-});
+};
 exports.getProduct = getProduct;
-const allProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const allProducts = async (req, res) => {
     try {
-        const products = yield Product_1.Product.findAll();
+        const products = await Product_1.Product.findAll();
         if (products) {
             res.status(201).json({ products });
         }
@@ -136,5 +127,5 @@ const allProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     catch (error) {
         res.status(500).json({ error: 'Ocorreu um erro, tente mais tarde.' });
     }
-});
+};
 exports.allProducts = allProducts;

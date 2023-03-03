@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -21,11 +12,11 @@ describe('testing the User route', () => {
     let password = '12345678';
     let user;
     let token;
-    beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
+    beforeAll(async () => {
         // check dataBase connection
-        yield (0, mysql_1.connection)();
-        user = yield User_1.User.findOne({ where: { email: 'teste@gmail.com' } });
-    }));
+        await (0, mysql_1.connection)();
+        user = await User_1.User.findOne({ where: { email: 'teste@gmail.com' } });
+    });
     it('should return test route', (done) => {
         (0, supertest_1.default)(app_1.default)
             .get('/test')
@@ -138,26 +129,26 @@ describe('testing the User route', () => {
     });
     it('should return error message', (done) => {
         (0, supertest_1.default)(app_1.default)
-            .put(`/user/update/${user === null || user === void 0 ? void 0 : user.id}`)
+            .put(`/user/update/${user?.id}`)
             .then((response) => {
             expect(response.body).toHaveProperty('error');
             expect(response.body.error).toBe('Usuário não autenticado.');
             return done();
         });
     });
-    it('should return user update', () => __awaiter(void 0, void 0, void 0, function* () {
-        user = yield User_1.User.findOne({ where: { email: 'teste@gmail.com' } });
-        yield (0, supertest_1.default)(app_1.default)
-            .put(`/user/update/${user === null || user === void 0 ? void 0 : user.id}`)
+    it('should return user update', async () => {
+        user = await User_1.User.findOne({ where: { email: 'teste@gmail.com' } });
+        await (0, supertest_1.default)(app_1.default)
+            .put(`/user/update/${user?.id}`)
             .set('Authorization', `Bearer ${token}`)
             .then((response) => {
             expect(response.body).toHaveProperty('message');
             expect(response.body.message).toBe('Dados atualizados...');
         });
-    }));
+    });
     it('should return error delete user', (done) => {
         (0, supertest_1.default)(app_1.default)
-            .delete(`/user/delete/${user === null || user === void 0 ? void 0 : user.id}`)
+            .delete(`/user/delete/${user?.id}`)
             .then((response) => {
             expect(response.body).not.toBeUndefined();
             expect(response.body).not.toBeNull();
@@ -166,14 +157,14 @@ describe('testing the User route', () => {
             return done();
         });
     });
-    it('should return exclude user', () => __awaiter(void 0, void 0, void 0, function* () {
-        user = yield User_1.User.findOne({ where: { email: 'teste@gmail.com' } });
-        yield (0, supertest_1.default)(app_1.default)
-            .delete(`/user/delete/${user === null || user === void 0 ? void 0 : user.id}`)
+    it('should return exclude user', async () => {
+        user = await User_1.User.findOne({ where: { email: 'teste@gmail.com' } });
+        await (0, supertest_1.default)(app_1.default)
+            .delete(`/user/delete/${user?.id}`)
             .set('Authorization', `Bearer ${token}`)
             .then((response) => {
             expect(response.body).toHaveProperty('message');
             expect(response.body.message).toBe('Usuário excluido com sucesso...');
         });
-    }));
+    });
 });

@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -17,7 +8,7 @@ const User_1 = require("../models/User");
 const validator_1 = __importDefault(require("validator"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const create = async (req, res) => {
     let { name, email, password } = req.body;
     try {
         if (!name || !password || !email) {
@@ -36,8 +27,8 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (!validator_1.default.isEmail(email)) {
             return res.status(400).json({ message: 'Digite um Email valido.' });
         }
-        let userEmail = yield User_1.User.findOne({ where: { email } });
-        if ((userEmail === null || userEmail === void 0 ? void 0 : userEmail.email) === email) {
+        let userEmail = await User_1.User.findOne({ where: { email } });
+        if (userEmail?.email === email) {
             return res.status(200).json({ message: 'Email já cadastrado.' });
         }
         let passwordHash = '';
@@ -48,7 +39,7 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 return res.status(400).json({ message: 'Digite uma senha valida.' });
             }
             else {
-                passwordHash = yield bcrypt_1.default.hashSync(password, 10);
+                passwordHash = await bcrypt_1.default.hashSync(password, 10);
             }
         }
         else {
@@ -57,13 +48,13 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         name = name.toLowerCase();
         let nameFormated = name.split(' ')[0];
         name = nameFormated[0].toUpperCase() + name.substring(1);
-        let newUser = yield User_1.User.create({
+        let newUser = await User_1.User.create({
             name,
             email,
             password: passwordHash,
         });
         if (newUser) {
-            let token = yield jsonwebtoken_1.default.sign({ email: newUser.email, id: newUser.id }, process.env.JWT_SECRET_KEY, {
+            let token = await jsonwebtoken_1.default.sign({ email: newUser.email, id: newUser.id }, process.env.JWT_SECRET_KEY, {
                 expiresIn: '12h',
             });
             return res.status(201).json({ token });
@@ -72,13 +63,13 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     catch (error) {
         return res.status(500).json({ error: 'Ocorreu um erro, tente mais tarde.' });
     }
-});
+};
 exports.create = create;
-const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const update = async (req, res) => {
     let { name, email, password } = req.body;
     const { id } = req.params;
     try {
-        let user = yield User_1.User.findOne({ where: { id } });
+        let user = await User_1.User.findOne({ where: { id } });
         if (user) {
             if (name) {
                 name = name.toLowerCase();
@@ -101,13 +92,13 @@ const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 let regex = /^[0-9a-zA-Z]{8,}$/;
                 let isPasswordValid = regex.test(password);
                 if (isPasswordValid) {
-                    user.password = yield bcrypt_1.default.hashSync(password, 10);
+                    user.password = await bcrypt_1.default.hashSync(password, 10);
                 }
                 else {
                     return res.status(400).json({ error: 'Senha invalida' });
                 }
             }
-            yield user.save();
+            await user.save();
             return res.status(201).json({ message: 'Dados atualizados...' });
         }
         else {
@@ -117,20 +108,20 @@ const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     catch (error) {
         return res.status(500).json({ error: 'Ocorreu um erro, tente mais tarde.' });
     }
-});
+};
 exports.update = update;
-const signin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const signin = async (req, res) => {
     let { email, password } = req.body;
     try {
         if (!email || !password) {
             return res.status(400).json({ message: 'Preencha todos os campos.' });
         }
         if (email && validator_1.default.isEmail(email)) {
-            let user = yield User_1.User.findOne({ where: { email } });
+            let user = await User_1.User.findOne({ where: { email } });
             if (user) {
-                let isPasswordValid = yield bcrypt_1.default.compareSync(password, user === null || user === void 0 ? void 0 : user.password);
+                let isPasswordValid = await bcrypt_1.default.compareSync(password, user?.password);
                 if (isPasswordValid) {
-                    let token = yield jsonwebtoken_1.default.sign({ email: user === null || user === void 0 ? void 0 : user.email, id: user === null || user === void 0 ? void 0 : user.id }, process.env.JWT_SECRET_KEY, {
+                    let token = await jsonwebtoken_1.default.sign({ email: user?.email, id: user?.id }, process.env.JWT_SECRET_KEY, {
                         expiresIn: '12h',
                     });
                     return res.status(201).json({ token });
@@ -147,14 +138,14 @@ const signin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     catch (error) {
         return res.status(500).json({ error: 'Ocorreu um erro, tente mais tarde.' });
     }
-});
+};
 exports.signin = signin;
-const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const deleteUser = async (req, res) => {
     let { id } = req.params;
     try {
-        const user = yield User_1.User.findByPk(id);
+        const user = await User_1.User.findByPk(id);
         if (user) {
-            yield user.destroy();
+            await user.destroy();
             res.status(201).json({ message: 'Usuário excluido com sucesso...' });
         }
         else {
@@ -164,15 +155,15 @@ const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     catch (error) {
         return res.status(500).json({ error: 'Ocorreu um erro, tente mais tarde.' });
     }
-});
+};
 exports.deleteUser = deleteUser;
-const infoUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const infoUser = async (req, res) => {
     let { id } = req.params;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let { email } = req.user;
     try {
-        let user = yield User_1.User.findByPk(id);
-        if ((user === null || user === void 0 ? void 0 : user.email) === email) {
+        let user = await User_1.User.findByPk(id);
+        if (user?.email === email) {
             return res.status(201).json(user);
         }
         else {
@@ -182,5 +173,5 @@ const infoUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     catch (error) {
         return res.status(500).json({ error: 'ocorreu um erro, tente mais tarde.' });
     }
-});
+};
 exports.infoUser = infoUser;

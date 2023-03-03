@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -25,11 +16,11 @@ describe('testing the product route.', () => {
     let name = 'Prego teste';
     let description = '5X12 teste';
     let input = 25;
-    beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
+    beforeAll(async () => {
         // check dataBase connection
-        yield (0, mysql_1.connection)();
-        user = yield User_1.User.findOne({ where: { email: email } });
-    }));
+        await (0, mysql_1.connection)();
+        user = await User_1.User.findOne({ where: { email: email } });
+    });
     it('should return login', (done) => {
         (0, supertest_1.default)(app_1.default)
             .post('/login')
@@ -44,7 +35,7 @@ describe('testing the product route.', () => {
     });
     it('should return error authentication ', (done) => {
         (0, supertest_1.default)(app_1.default)
-            .post(`/product/create/${user === null || user === void 0 ? void 0 : user.id}`)
+            .post(`/product/create/${user?.id}`)
             .then((response) => {
             expect(response.body).toHaveProperty('error');
             expect(response.body.error).not.toBeNaN();
@@ -52,22 +43,22 @@ describe('testing the product route.', () => {
             return done();
         });
     });
-    it('should message error authentication', () => __awaiter(void 0, void 0, void 0, function* () {
-        let product = yield Product_1.Product.findOne({ where: { name: name, description: description } });
-        yield (0, supertest_1.default)(app_1.default)
-            .delete(`/delete/product/${product === null || product === void 0 ? void 0 : product.id}`)
+    it('should message error authentication', async () => {
+        let product = await Product_1.Product.findOne({ where: { name: name, description: description } });
+        await (0, supertest_1.default)(app_1.default)
+            .delete(`/delete/product/${product?.id}`)
             .then((response) => {
             expect(response.body).toHaveProperty('error');
             expect(response.body.error).toBe('Usuário não autenticado.');
             expect(response.body).not.toBeUndefined();
             expect(response.body).not.toBeNull();
         });
-    }));
+    });
     it('should return message fill all fields ', (done) => {
         (0, supertest_1.default)(app_1.default)
-            .post(`/product/create/${user === null || user === void 0 ? void 0 : user.id}`)
+            .post(`/product/create/${user?.id}`)
             .set('Authorization', `Bearer ${token}`)
-            .send(`name=${name}&description=${description}&userId=${user === null || user === void 0 ? void 0 : user.id}&input=${''}&total=${''}`)
+            .send(`name=${name}&description=${description}&userId=${user?.id}&input=${''}&total=${''}`)
             .then((response) => {
             expect(response.body).toHaveProperty('message');
             expect(response.body.message).not.toBeNull();
@@ -76,9 +67,9 @@ describe('testing the product route.', () => {
             return done();
         });
     });
-    it('should return create product', () => __awaiter(void 0, void 0, void 0, function* () {
-        yield (0, supertest_1.default)(app_1.default)
-            .post(`/product/create/${user === null || user === void 0 ? void 0 : user.id}`)
+    it('should return create product', async () => {
+        await (0, supertest_1.default)(app_1.default)
+            .post(`/product/create/${user?.id}`)
             .send(`name=${name}&description=${description}&input=${input}`)
             .set('Authorization', `Bearer ${token}`)
             .then((response) => {
@@ -89,11 +80,11 @@ describe('testing the product route.', () => {
             expect(response.body.message).not.toBeNull();
             expect(response.body).not.toContain('error');
         });
-    }));
-    it('should return product update (add product) message', () => __awaiter(void 0, void 0, void 0, function* () {
-        let product = yield Product_1.Product.findOne({ where: { name } });
-        yield (0, supertest_1.default)(app_1.default)
-            .put(`/update/product/${product === null || product === void 0 ? void 0 : product.id}`)
+    });
+    it('should return product update (add product) message', async () => {
+        let product = await Product_1.Product.findOne({ where: { name } });
+        await (0, supertest_1.default)(app_1.default)
+            .put(`/update/product/${product?.id}`)
             .send(`input=${30}`)
             .set('Authorization', `Bearer ${token}`)
             .then((response) => {
@@ -102,11 +93,11 @@ describe('testing the product route.', () => {
             expect(response.body.message).not.toBeUndefined();
             expect(response.body.message).not.toBeNull();
         });
-    }));
-    it('should return product update (remove product) message', () => __awaiter(void 0, void 0, void 0, function* () {
-        let product = yield Product_1.Product.findOne({ where: { name } });
-        yield (0, supertest_1.default)(app_1.default)
-            .put(`/update/product/${product === null || product === void 0 ? void 0 : product.id}`)
+    });
+    it('should return product update (remove product) message', async () => {
+        let product = await Product_1.Product.findOne({ where: { name } });
+        await (0, supertest_1.default)(app_1.default)
+            .put(`/update/product/${product?.id}`)
             .send(`output=${30}`)
             .set('Authorization', `Bearer ${token}`)
             .then((response) => {
@@ -115,11 +106,11 @@ describe('testing the product route.', () => {
             expect(response.body.message).not.toBeUndefined();
             expect(response.body.message).not.toBeNull();
         });
-    }));
-    it('should return product update (update product description) message', () => __awaiter(void 0, void 0, void 0, function* () {
-        let product = yield Product_1.Product.findOne({ where: { name } });
-        yield (0, supertest_1.default)(app_1.default)
-            .put(`/update/product/${product === null || product === void 0 ? void 0 : product.id}`)
+    });
+    it('should return product update (update product description) message', async () => {
+        let product = await Product_1.Product.findOne({ where: { name } });
+        await (0, supertest_1.default)(app_1.default)
+            .put(`/update/product/${product?.id}`)
             .send(`description=${'description product'}`)
             .set('Authorization', `Bearer ${token}`)
             .then((response) => {
@@ -128,11 +119,11 @@ describe('testing the product route.', () => {
             expect(response.body.message).not.toBeUndefined();
             expect(response.body.message).not.toBeNull();
         });
-    }));
-    it('should return product update (update product input) message', () => __awaiter(void 0, void 0, void 0, function* () {
-        let product = yield Product_1.Product.findOne({ where: { name } });
-        yield (0, supertest_1.default)(app_1.default)
-            .put(`/update/product/${product === null || product === void 0 ? void 0 : product.id}`)
+    });
+    it('should return product update (update product input) message', async () => {
+        let product = await Product_1.Product.findOne({ where: { name } });
+        await (0, supertest_1.default)(app_1.default)
+            .put(`/update/product/${product?.id}`)
             .send(`input=${30}`)
             .set('Authorization', `Bearer ${token}`)
             .then((response) => {
@@ -141,11 +132,11 @@ describe('testing the product route.', () => {
             expect(response.body.message).not.toBeUndefined();
             expect(response.body.message).not.toBeNull();
         });
-    }));
-    it('should return product update (update product output) message', () => __awaiter(void 0, void 0, void 0, function* () {
-        let product = yield Product_1.Product.findOne({ where: { name } });
-        yield (0, supertest_1.default)(app_1.default)
-            .put(`/update/product/${product === null || product === void 0 ? void 0 : product.id}`)
+    });
+    it('should return product update (update product output) message', async () => {
+        let product = await Product_1.Product.findOne({ where: { name } });
+        await (0, supertest_1.default)(app_1.default)
+            .put(`/update/product/${product?.id}`)
             .send(`output=${30}`)
             .set('Authorization', `Bearer ${token}`)
             .then((response) => {
@@ -154,22 +145,22 @@ describe('testing the product route.', () => {
             expect(response.body.message).not.toBeUndefined();
             expect(response.body.message).not.toBeNull();
         });
-    }));
-    it('should return authentication error', () => __awaiter(void 0, void 0, void 0, function* () {
-        let product = yield Product_1.Product.findOne({ where: { name } });
-        yield (0, supertest_1.default)(app_1.default)
-            .get(`/product/view/${product === null || product === void 0 ? void 0 : product.id}`)
+    });
+    it('should return authentication error', async () => {
+        let product = await Product_1.Product.findOne({ where: { name } });
+        await (0, supertest_1.default)(app_1.default)
+            .get(`/product/view/${product?.id}`)
             .then((response) => {
             expect(response.body).toHaveProperty('error');
             expect(response.body.error).toBe('Usuário não autenticado.');
             expect(response.body.error).not.toBeUndefined();
             expect(response.body.error).not.toBeNull();
         });
-    }));
-    it('should return product', () => __awaiter(void 0, void 0, void 0, function* () {
-        let product = yield Product_1.Product.findOne({ where: { name } });
-        yield (0, supertest_1.default)(app_1.default)
-            .get(`/product/view/${product === null || product === void 0 ? void 0 : product.id}`)
+    });
+    it('should return product', async () => {
+        let product = await Product_1.Product.findOne({ where: { name } });
+        await (0, supertest_1.default)(app_1.default)
+            .get(`/product/view/${product?.id}`)
             .set('Authorization', `Bearer ${token}`)
             .then((response) => {
             expect(response.body).toHaveProperty('product');
@@ -177,11 +168,11 @@ describe('testing the product route.', () => {
             expect(response.body.product).not.toBeUndefined();
             expect(response.body.product).not.toBeNull();
         });
-    }));
-    it('should return authentication error', () => __awaiter(void 0, void 0, void 0, function* () {
-        let product = yield Product_1.Product.findOne({ where: { name } });
-        yield (0, supertest_1.default)(app_1.default)
-            .delete(`/delete/product/${product === null || product === void 0 ? void 0 : product.id}`)
+    });
+    it('should return authentication error', async () => {
+        let product = await Product_1.Product.findOne({ where: { name } });
+        await (0, supertest_1.default)(app_1.default)
+            .delete(`/delete/product/${product?.id}`)
             .then((response) => {
             expect(response.body).toHaveProperty('error');
             expect(response.body.error).toBe('Usuário não autenticado.');
@@ -190,16 +181,16 @@ describe('testing the product route.', () => {
             expect(response.body).not.toBeUndefined();
             expect(response.body).not.toBeNull();
         });
-    }));
-    it('should return delete product', () => __awaiter(void 0, void 0, void 0, function* () {
-        let product = yield Product_1.Product.findOne({ where: { name } });
-        yield (0, supertest_1.default)(app_1.default)
-            .delete(`/delete/product/${product === null || product === void 0 ? void 0 : product.id}`)
+    });
+    it('should return delete product', async () => {
+        let product = await Product_1.Product.findOne({ where: { name } });
+        await (0, supertest_1.default)(app_1.default)
+            .delete(`/delete/product/${product?.id}`)
             .set('Authorization', `Bearer ${token}`)
             .then((response) => {
             expect(response.body.message).toBe('Produto excluido com sucesso.');
             expect(response.body).not.toBeUndefined();
             expect(response.body).not.toBeNull();
         });
-    }));
+    });
 });
