@@ -7,7 +7,7 @@ import { SigninProps, CreateUserProps } from '../types/Users';
 
 export const create = async (req: Request, res: Response) => {
   let { name, email, password }: CreateUserProps = req.body;
-
+  console.log('dados ===>>> ', name, email, password);
   try {
     if (!name || !password || !email) {
       return res.status(400).json({ message: 'Preencha todos os campos...' });
@@ -60,6 +60,7 @@ export const create = async (req: Request, res: Response) => {
       return res.status(201).json({ token });
     }
   } catch (error) {
+    console.log('error ===>>> ', error);
     return res.status(500).json({ error: 'Ocorreu um erro, tente mais tarde.' });
   }
 };
