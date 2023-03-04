@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { User } from '../models/User';
 import validator from 'validator';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import Jwt from 'jsonwebtoken';
 import { SigninProps, CreateUserProps } from '../types/Users';
 
